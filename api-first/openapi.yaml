@@ -1,0 +1,460 @@
+openapi: 3.0.0
+x-stoplight:
+  id: wa7dppiliocew
+info:
+  title: OpenAPI Example
+  version: oly-99881
+  description: This is the CyberArk API First Template.
+  termsOfService: 'https://cyberark.com/terms/'
+  contact:
+    name: CyberArk
+    url: 'http://cyberark.com/contact'
+    email: contact@cyberark.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking Test
+    url: https://virtserver.swaggerhub.com/CyberArk/api-first-template/oly-99881
+    x-internal: true
+  - url: 'https://{tenant}/api'
+    x-internal: true
+security:
+  - bearerAuth: []
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+          maxLength: 50
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    patch:
+      summary: Update User Information
+      operationId: update-user-information
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Updated User Rebecca Baker:
+                  value:
+                    id: 13
+                    firstName: Rebecca
+                    lastName: Baker
+                    email: rebecca@gmail.com
+                    dateOfBirth: '1985-10-02'
+                    emailVerified: false
+                    createDate: '2019-08-24'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '["https://{service}.cyberark.cloud.com"]'
+                maxLength: 100
+                format: /w+
+            RateLimit-Limit:
+              description: The number of allowed requests in the current period.
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+            RateLimit-Reset:
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+        '404':
+          description: User Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '["https://{service}.cyberark.cloud.com"]'
+                maxLength: 100
+                format: /w+
+            RateLimit-Limit:
+              description: The number of allowed requests in the current period.
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+            RateLimit-Reset:
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+        '4XX':
+          $ref: '#/components/responses/error'
+        '401':
+          $ref: '#/components/responses/error'
+        '409':
+          $ref: '#/components/responses/error'
+        '429':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      description: Update the information of an existing user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  maxLength: 40
+                  pattern: '^[a-zA-Z_.-]*$'
+                lastName:
+                  type: string
+                  maxLength: 40
+                  pattern: '^[a-zA-Z_.-]*$'
+                email:
+                  type: string
+                  format: email
+                  maxLength: 40
+                  description: 'If a new email is given, the user''s email verified property will be set to false.'
+                birthDateAt:
+                  type: string
+                  format: date
+                  maxLength: 40
+                  example: '1997-10-31'
+            examples:
+              Update First Name:
+                value:
+                  firstName: Rebecca
+              Update Email:
+                value:
+                  email: rebecca@gmail.com
+              Update Last Name & Date of Birth:
+                value:
+                  lastName: Baker
+                  dateOfBirth: '1985-10-02'
+        description: Patch user properties to update.
+      security:
+        - bearerAuth: []
+      x-stoplight:
+        id: oa5rdqkzxbs8i
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Get User Alice Smith:
+                  value:
+                    id: 142
+                    firstName: Alice
+                    lastName: Smith
+                    email: alice.smith@gmail.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    signUpDate: '2019-08-24'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                format: /w+
+                maxLength: 100
+                example:
+                  - 'https://authz.cyberark.com'
+            RateLimit-Limit:
+              description: The number of allowed requests in the current period.
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+            RateLimit-Reset:
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+        '404':
+          description: User Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '["https://{service}.cyberark.cloud.com"]'
+                maxLength: 100
+                format: /w+
+            RateLimit-Limit:
+              description: The number of allowed requests in the current period.
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+            RateLimit-Reset:
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+        '4XX':
+          $ref: '#/components/responses/error'
+        '401':
+          $ref: '#/components/responses/error'
+        '429':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      operationId: get-users-by-id
+      description: Retrieve the information of the user with the matching user ID.
+      security:
+        - bearerAuth: []
+      x-stoplight:
+        id: 2l6yq3ac0j7gs
+  /users:
+    post:
+      summary: Create New User
+      operationId: create-new-user
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                New User Bob Fellow:
+                  value:
+                    id: 12
+                    firstName: Bob
+                    lastName: Fellow
+                    email: bob.fellow@gmail.com
+                    dateOfBirth: '1996-08-24'
+                    emailVerified: false
+                    createDate: '2020-11-18'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '["https://{service}.cyberark.cloud.com"]'
+                maxLength: 100
+                format: /w+
+            RateLimit-Limit:
+              description: The number of allowed requests in the current period.
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+            RateLimit-Reset:
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+        '404':
+          description: Missing Required Information
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '["https://{service}.cyberark.cloud.com"]'
+                maxLength: 100
+                format: /w+
+            RateLimit-Limit:
+              description: The number of allowed requests in the current period.
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+            RateLimit-Reset:
+              schema:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 1000
+        '4XX':
+          $ref: '#/components/responses/error'
+        '401':
+          $ref: '#/components/responses/error'
+        '409':
+          $ref: '#/components/responses/error'
+        '429':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  maxLength: 20
+                  pattern: '^[a-zA-Z_.-]*$'
+                lastName:
+                  type: string
+                  maxLength: 20
+                  pattern: '^[a-zA-Z_.-]*$'
+                email:
+                  type: string
+                  format: email
+                  maxLength: 40
+                birthDateAt:
+                  type: string
+                  format: date
+                  maxLength: 40
+                  example: '1997-10-31'
+              required:
+                - firstName
+                - lastName
+                - email
+                - dateOfBirth
+            examples:
+              Create User Bob Fellow:
+                value:
+                  firstName: Bob
+                  lastName: Fellow
+                  email: bob.fellow@gmail.com
+                  dateOfBirth: '1996-08-24'
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+      x-stoplight:
+        id: tg20idf6d295n
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: ''
+      x-examples:
+        Alice Smith:
+          id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 10
+          description: Unique identifier for the given user.
+          x-stoplight:
+            id: ermth1fwdkjuf
+        firstName:
+          type: string
+          pattern: '^[a-zA-Z0-9_.-]*$'
+          maxLength: 20
+          x-stoplight:
+            id: idut5nwp60lvi
+        lastName:
+          type: string
+          maxLength: 20
+          pattern: '^[a-zA-Z_.-]*$'
+          x-stoplight:
+            id: tevovmer0wu2w
+        email:
+          type: string
+          format: email
+          maxLength: 40
+          x-stoplight:
+            id: 3lsltys05g0x0
+        birthDateAt:
+          type: string
+          format: date
+          maxLength: 40
+          example: '1997-10-31'
+          x-stoplight:
+            id: 3r3sivvarir02
+        emailVerified:
+          type: boolean
+          description: Set to true if the user's email has been verified.
+          x-stoplight:
+            id: ih597qu47l73w
+        createdDateAt:
+          type: string
+          format: date
+          maxLength: 40
+          description: The date that the user was created.
+          x-stoplight:
+            id: vdkongfyyueyz
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - emailVerified
+      x-stoplight:
+        id: wowre5th8svbn
+  responses:
+    error:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - code
+              - message
+            properties:
+              code:
+                type: string
+                pattern: \w+
+                maxLength: 99
+              message:
+                type: string
+                pattern: \w+
+                maxLength: 255
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+            example: '["https://{service}.cyberark.cloud.com"]'
+            maxLength: 100
+            format: /w+
+        RateLimit-Limit:
+          description: The number of allowed requests in the current period.
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 1000
+        RateLimit-Reset:
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 1000
+        Retry-After:
+          description: The number of seconds to wait before allowing a follow-up request.
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 1000
+  securitySchemes:
+    bearerAuth:
+      description: A bearer token in the format of a JWT and conforming to the specifications included in RFC8725.
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
